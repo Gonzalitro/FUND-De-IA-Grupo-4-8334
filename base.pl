@@ -57,7 +57,7 @@ motor(kia_sorento,         i4,        191, gasolina).
 motor(subaru_outback,      b4,        260, gasolina).
 motor(ford_mustang_gt,     v8,        450, gasolina).
 motor(mazda_mx5,           i4,        181, gasolina).
-motor(porsche_911,         b6,        379, gasolina).
+motor(porsche_911,         v6,        379, gasolina).
 motor(ford_f150,           v6,        400, gasolina).
 motor(toyota_hilux,        i4,        201, diesel).
 motor(jeep_wrangler,       v6,        285, gasolina).
@@ -94,31 +94,37 @@ mecanica(chevrolet_silverado, automatica, '4x4').
 % ==========================================
 % REGLAS DE INFERENCIA (Conocimiento Deducido)
 % ==========================================
-
 % 1. Vehiculo de ciudad
-es_citadino(ID) :-
+auto_ciudad(ID) :-
     auto(ID, _, _, Carroceria, _),
     (Carroceria == sedan ; Carroceria == hatchback),
+    dimensiones(ID, Asientos, Puertas),
+    (Asientos =< 5, Puertas =< 5),
     motor(ID, _, Potencia, _),
-    Potencia =< 150,
+    Potencia =< 170,
     mecanica(ID, _, delantera).
 
 % 2. Vehiculo familiar
-familia_numerosa(ID) :-
+auto_familiar(ID) :-
     auto(ID, _, _, Carroceria, _),
-    (Carroceria == suv ; Carroceria == wagon),
-    dimensiones(ID, Asientos, _),
-    Asientos > 5.
+    (Carroceria == suv ; Carroceria == wagon; Carroceria == pickup),
+    dimensiones(ID, Asientos, Puertas),
+    (Asientos >= 5, Puertas >=4),
+    mecanica(ID, Transmision, _),
+    Transmision == automatica.
 
 % 3. Deportivo 
-deportivo_purista(ID) :-
-    mecanica(ID, manual, trasera),
+auto_deportivo(ID) :-
+    dimensiones(ID, Asientos, Puertas),
+    (Asientos =< 5, Puertas =< 4),
+    mecanica(ID, _, trasera),
     motor(ID, _, Potencia, _),
-    Potencia > 150.
+    Potencia > 275.
 
 % 4.  Off-Road
-bestia_offroad(ID) :-
-    mecanica(ID, _, '4x4'),
+auto_offroad(ID) :-
+    mecanica(ID, _, Traccion),
+    (Traccion == awd; Traccion == '4x4'),
     motor(ID, _, Potencia, _),
     Potencia > 250,
     auto(ID, _, _, Carroceria, _),
@@ -126,14 +132,14 @@ bestia_offroad(ID) :-
     Carroceria \== hatchback.
 
 % 5. Vehiculo  apto para nieve
-premium_nieve(ID) :-
+auto_nieve(ID) :-
     mecanica(ID, automatica, Traccion),
     (Traccion == awd ; Traccion == '4x4'),
     motor(ID, _, Potencia, _),
     Potencia > 200.
 
 % 6. vehiculo de entusiasta 
-entusiasta(ID) :-
+auto_entusiasta(ID) :-
     dimensiones(ID, Asientos, Puertas),
     Asientos =< 5,
     Puertas =< 4,
@@ -152,33 +158,22 @@ iniciar :-
     write('   EXPERTO EN AUTOMOVILES - CHATBOT       '), nl,
     write('=========================================='), nl,
     write('Selecciona una de las siguientes opciones:'), nl,
-    read(cant_filtros),
     menu.
 
 menu :-
     nl,
-%   preguntas basicas
-    write('1. Buscar auto por marca'), nl,
-    write('2. buscar auto por tipo'), nl,
-    write('3. buscar auto por año'), nl,
-    write('4. Buscar auto por motor'), nl,
-    write('5. buscar auto por tracción'), nl,
-    write('6. buscar auto por transmisión'), nl,
-    write('7. buscar auto por potencia mínima'), nl,
-    write('8. buscar auto por tipo de combustible'), nl,
-% consultas complejas
-    write('9. Vehiculos de ciudad recomendados'), nl,
-    write('10. Vehiculos familiares recomendados'), nl,
-    write('11. vehiculos deportivos '), nl,
-    write('12. vehiculos recomendados para offroad'), nl,
-    write('13. Vehiculos premium aptos para nieve'), nl,
-    write('14. Vehiculos de lujo'), nl,
-    write('15. vehiculos de entusiasta'), nl,
+% consultas de inferencia
+    write('1. Buscar Vehiculo por caracteristicas'), nl,
+    write('2. Vehiculos de ciudad recomendados'), nl,
+    write('3. Vehiculos familiares recomendados'), nl,
+    write('4. vehiculos deportivos '), nl,
+    write('5. vehiculos recomendados para offroad'), nl,
+    write('6. Vehiculos premium aptos para nieve'), nl,
+    write('7. vehiculos de entusiasta'), nl,
     write('0. Salir.'), nl,
     write('------------------------------------------'), nl,
     write('Opcion (recuerda escribir el punto final, ej: 15.): '),
     read(Opcion),
-    read(sel_marca),
     procesar_opcion(Opcion).
 
 % --- Respuestas del Chatbot ---
@@ -186,68 +181,54 @@ menu :-
 procesar_opcion(0) :- 
     write('Sesion finalizada.'), nl.
 
+% =========================================================
+% OPCION 1 - BUSQUEDA POR CARACTERISTICAS
+% =========================================================
+
 procesar_opcion(1) :-
-    findall(ID,auto(ID,sel_marca, _, _, _),Lista),
-    write('autos de entusiasta:'), nl, mostrar_lista(Lista).
+    nl,
+    write('========== BUSQUEDA POR CARACTERISTICAS =========='), nl,
+    write('1. Buscar auto por marca'), nl,
+    write('2. Buscar auto por carroceria/tipo'), nl,
+    write('3. Buscar auto por ano'), nl,
+    write('4. Buscar auto por motor'), nl,
+    write('5. Buscar auto por traccion'), nl,
+    write('6. Buscar auto por transmision'), nl,
+    write('7. Buscar auto por potencia minima'), nl,
+    write('8. Buscar auto por tipo de combustible'), nl,
+    nl,
+    write('Ingrese la CANTIDAD de caracteristicas que desea incluir: '),
+    read(Cantidad),
+    seleccionar_filtros(Cantidad, Filtros),
+    buscar_vehiculos(Filtros, Lista),
+    nl,
+    write('========== RESULTADOS =========='), nl,
+    mostrar_lista(Lista).
+
 
 procesar_opcion(2) :-
-    findall(ID,entusiasta(ID),Lista),
-    write('autos de entusiasta:'), nl, mostrar_lista(Lista).    
+    findall(ID,auto_ciudad(ID),Lista),
+    write('autos de ciudad:'), nl, mostrar_lista(Lista).
+    
 procesar_opcion(3) :-
-    findall(ID,entusiasta(ID),Lista),
-    write('autos de entusiasta:'), nl, mostrar_lista(Lista).
-    
+    findall(ID,auto_familiar(ID),Lista),
+    write('autos familiares:'), nl, mostrar_lista(Lista).
+
 procesar_opcion(4) :-
-    findall(ID,entusiasta(ID),Lista),
-    write('autos de entusiasta:'), nl, mostrar_lista(Lista).
-    
+    findall(ID,auto_deportivo(ID),Lista),
+    write('autos deportivos:'), nl, mostrar_lista(Lista).
+
 procesar_opcion(5) :-
-    findall(ID,entusiasta(ID),Lista),
-    write('autos de entusiasta:'), nl, mostrar_lista(Lista).
+    findall(ID,auto_offroad(ID),Lista),
+    write('autos de offroad:'), nl, mostrar_lista(Lista).
     
 procesar_opcion(6) :-
-    findall(ID,entusiasta(ID),Lista),
-    write('autos de entusiasta:'), nl, mostrar_lista(Lista).
-    
+    findall(ID,auto_nieve(ID),Lista),
+    write('autos de nieve:'), nl, mostrar_lista(Lista).
+
 procesar_opcion(7) :-
-    findall(ID,entusiasta(ID),Lista),
+    findall(ID,auto_entusiasta(ID),Lista),
     write('autos de entusiasta:'), nl, mostrar_lista(Lista).
-    
-procesar_opcion(8) :-
-    findall(ID,entusiasta(ID),Lista),
-    write('autos de entusiasta:'), nl, mostrar_lista(Lista).
-
-procesar_opcion(9) :-
-    findall(ID,entusiasta(ID),Lista),
-    write('autos de entusiasta:'), nl, mostrar_lista(Lista).
-    
-procesar_opcion(10) :-
-    findall(ID,entusiasta(ID),Lista),
-    write('autos de entusiasta:'), nl, mostrar_lista(Lista).
-    
-procesar_opcion(11) :-
-    findall(ID,entusiasta(ID),Lista),
-    write('autos de entusiasta:'), nl, mostrar_lista(Lista).
-    
-procesar_opcion(12) :-
-    findall(ID,entusiasta(ID),Lista),
-    write('autos de entusiasta:'), nl, mostrar_lista(Lista).
-    
-procesar_opcion(13) :-
-    findall(ID,entusiasta(ID),Lista),
-    write('autos de entusiasta:'), nl, mostrar_lista(Lista).
-    
-procesar_opcion(14) :-
-    findall(ID,entusiasta(ID),Lista),
-    write('autos de entusiasta:'), nl, mostrar_lista(Lista).
-
-
-
-procesar_opcion(15) :-
-    findall(ID,entusiasta(ID),Lista),
-    write('autos de entusiasta:'), nl, mostrar_lista(Lista).
-
-
 
 procesar_opcion(_) :-
     write('Opcion invalida. Ingrese el numero seguido de un punto.'), nl, menu.
@@ -257,3 +238,103 @@ mostrar_lista([]) :-
 mostrar_lista([Cabeza|Cola]) :-
     write('  -> '), write(Cabeza), nl,
     mostrar_lista(Cola).
+
+
+
+seleccionar_filtros(0, []).
+seleccionar_filtros(Cantidad, [Filtro|Resto]) :-
+    Cantidad > 0,
+    nl,
+    write('Seleccione una caracteristica: '), nl,
+    write('1. Marca'), nl,
+    write('2. Carroceria/tipo'), nl,
+    write('3. Ano'), nl,
+    write('4. Motor'), nl,
+    write('5. Traccion'), nl,
+    write('6. Transmision'), nl,
+    write('7. Potencia minima'), nl,
+    write('8. Combustible'), nl,
+    write('Opcion: '),
+    read(Opcion),
+
+    ingresar_filtro(Opcion, Filtro),
+
+    NuevaCantidad is Cantidad - 1,
+    seleccionar_filtros(NuevaCantidad, Resto).
+
+
+% =========================================================
+% INGRESAR CADA FILTRO
+% =========================================================
+
+ingresar_filtro(1, marca(Marca)) :-
+    write('Ingrese la marca: '),
+    read(Marca).
+
+
+ingresar_filtro(2, carroceria(Carroceria)) :-
+    write('Ingrese el tipo/carroceria: '),
+    read(Carroceria).
+
+ingresar_filtro(3, anio(Ano)) :-
+    write('Ingrese el ano: '),
+    read(Ano).
+
+
+ingresar_filtro(4, motor(TipoMotor)) :-
+    write('Ingrese el tipo de motor: '),
+    read(TipoMotor).
+
+ingresar_filtro(5, traccion(Traccion)) :-
+    write('Ingrese la traccion: '),
+    read(Traccion).
+
+ingresar_filtro(6, transmision(Transmision)) :-
+    write('Ingrese la transmision: '),
+    read(Transmision).
+
+ingresar_filtro(7, potencia_minima(Potencia)) :-
+    write('Ingrese la potencia minima en HP: '),
+    read(Potencia).
+
+ingresar_filtro(8, combustible(Combustible)) :-
+    write('Ingrese el combustible: '),
+    read(Combustible).
+
+buscar_vehiculos(Filtros, Lista) :-
+    findall(
+        ID,
+        cumple_filtros(ID, Filtros),
+        Lista
+    ).
+
+cumple_filtros(_, []).
+
+cumple_filtros(ID, [Filtro|Resto]) :-
+    cumple_filtro(ID, Filtro),
+    cumple_filtros(ID, Resto).
+
+cumple_filtro(ID, marca(Marca)) :-
+    auto(ID, Marca, _, _, _).
+
+cumple_filtro(ID, carroceria(Carroceria)) :-
+    auto(ID, _, _, Carroceria, _).
+
+cumple_filtro(ID, anio(Ano)) :-
+    auto(ID, _, _, _, Ano).
+
+cumple_filtro(ID, motor(TipoMotor)) :-
+    motor(ID, TipoMotor, _, _).
+
+cumple_filtro(ID, traccion(Traccion)) :-
+    mecanica(ID, _, Traccion).
+
+cumple_filtro(ID, transmision(Transmision)) :-
+    mecanica(ID, Transmision, _).
+
+cumple_filtro(ID, potencia_minima(PotenciaMinima)) :-
+    motor(ID, _, Potencia, _),
+    Potencia >= PotenciaMinima.
+
+cumple_filtro(ID, combustible(Combustible)) :-
+    motor(ID, _, _, Combustible).
