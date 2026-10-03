@@ -47,25 +47,25 @@ dimensiones(bmw_m3,              5, 4).
 dimensiones(chevrolet_silverado, 6, 4).
 
 % 3. motor(ID, TipoMotor, PotenciaHP, Combustible).
-motor(honda_civic,         I4,        158, gasolina).
-motor(nissan_versa,        I4,        118, gasolina).
-motor(suzuki_swift,        I4,        82,  gasolina).
-motor(vw_golf_gti,         I4,        241, gasolina).
-motor(toyota_rav4,         I4,        203, gasolina).
+motor(honda_civic,         i4,        158, gasolina).
+motor(nissan_versa,        i4,        118, gasolina).
+motor(suzuki_swift,        i4,        82,  gasolina).
+motor(vw_golf_gti,         i4,        241, gasolina).
+motor(toyota_rav4,         i4,        203, gasolina).
 motor(chevrolet_tahoe,     v8,        355, gasolina).
-motor(kia_sorento,         I4,        191, gasolina).
+motor(kia_sorento,         i4,        191, gasolina).
 motor(subaru_outback,      b4,        260, gasolina).
 motor(ford_mustang_gt,     v8,        450, gasolina).
-motor(mazda_mx5,           I4,        181, gasolina).
+motor(mazda_mx5,           i4,        181, gasolina).
 motor(porsche_911,         b6,        379, gasolina).
 motor(ford_f150,           v6,        400, gasolina).
-motor(toyota_hilux,        I4,        201, diesel).
+motor(toyota_hilux,        i4,        201, diesel).
 motor(jeep_wrangler,       v6,        285, gasolina).
 motor(tesla_model_3,       electrico, 283, electricidad).
-motor(audi_a4,             I4,        201, gasolina).
+motor(audi_a4,             i4,        201, gasolina).
 motor(ford_bronco,         v6,        330, gasolina).
-motor(hyundai_tucson,      I4,        187, gasolina).
-motor(bmw_m3,              I6,        473, gasolina).
+motor(hyundai_tucson,      i4,        187, gasolina).
+motor(bmw_m3,              i6,        473, gasolina).
 motor(chevrolet_silverado, v8,        355, gasolina).
 
 % 4. mecanica(ID, Transmision, Traccion).
