@@ -1,6 +1,11 @@
 % ==========================================
 % HECHOS: CONOCIMIENTO EXPLÍCITO MODULAR
 % ==========================================
+% 1. auto(ID, Marca, Modelo, Carroceria, Año).
+% 2. dimensiones(ID, Asientos, Puertas).
+% 3. motor(ID, TipoMotor, PotenciaHP, Combustible).
+% 4. mecanica(ID, Transmision, Traccion).
+
 
 % 1. auto(ID, Marca, Modelo, Carroceria, Año).
 auto(honda_civic,         honda,      'Civic',       sedan,       2023).
@@ -24,6 +29,19 @@ auto(hyundai_tucson,      hyundai,    'Tucson',      suv,         2022).
 auto(bmw_m3,              bmw,        'M3',          sedan,       2024).
 auto(chevrolet_silverado, chevrolet,  'Silverado',   pickup,      2023).
 
+auto(subaru_forester_hy,  subaru,     'forester hibrido', suv,    2026).
+auto(bmw_i8,              bmw,        'i8',           coupe,      2016).
+auto(nissan_leaf,         nissan,     'leaf',         hatchback,  2015).
+auto(toyota_rav4_hybrid,  toyota,     'rav4_hybrid',  suv,        2017).
+auto(chevrolet_camaro_ss, chevrolet,  'camaro_ss',    coupe,      2016).
+auto(peugeot_308_hdi,     peugeot,    'hdi_308',      hatchback,  2015).
+auto(mitsubishi_l200,     mitsubishi, 'l200',         pickup,     2018).
+auto(alfa_romeo_giulia_qv, alfa_romeo, 'giulia_quadrifoglio', sedan, 2017).
+auto(hyundai_ioniq_hybrid, hyundai,   'ioniq_hybrid', sedan,      2018).
+auto(jeep_wrangler_rubicon, jeep,     'wrangler_rubicon', suv,    2014).
+auto(volvo_v60_d4,         volvo,     'v60_d4',       wagon,      2016).
+
+
 % 2. dimensiones(ID, Asientos, Puertas).
 dimensiones(honda_civic,         5, 4).
 dimensiones(nissan_versa,        5, 4).
@@ -45,6 +63,18 @@ dimensiones(ford_bronco,         5, 5).
 dimensiones(hyundai_tucson,      5, 5).
 dimensiones(bmw_m3,              5, 4).
 dimensiones(chevrolet_silverado, 6, 4).
+dimensiones(subaru_forester_hy,  5, 5).
+
+dimensiones(bmw_i8,              4, 2).
+dimensiones(nissan_leaf,         5, 5).
+dimensiones(toyota_rav4_hybrid,  5, 5).
+dimensiones(chevrolet_camaro_ss, 4, 2).
+dimensiones(peugeot_308_hdi,     5, 5).
+dimensiones(mitsubishi_l200,     5, 4).
+dimensiones(alfa_romeo_giulia_qv, 5, 4).
+dimensiones(hyundai_ioniq_hybrid, 5, 5).
+dimensiones(jeep_wrangler_rubicon, 4, 2).
+dimensiones(volvo_v60_d4,         5, 5).
 
 % 3. motor(ID, TipoMotor, PotenciaHP, Combustible).
 motor(honda_civic,         i4,        158, gasolina).
@@ -67,6 +97,17 @@ motor(ford_bronco,         v6,        330, gasolina).
 motor(hyundai_tucson,      i4,        187, gasolina).
 motor(bmw_m3,              i6,        473, gasolina).
 motor(chevrolet_silverado, v8,        355, gasolina).
+motor(subaru_forester_hy,  b4,        194, hibrido).
+motor(bmw_i8,              i3,        357, hibrido).
+motor(nissan_leaf,         electrico, 107, electricidad).
+motor(toyota_rav4_hybrid,  i4,        194, hibrido).
+motor(chevrolet_camaro_ss, v8,        455, gasolina).
+motor(peugeot_308_hdi,     i4,        120, diesel).
+motor(mitsubishi_l200,     i4,        178, diesel).
+motor(alfa_romeo_giulia_qv, v6,        505, gasolina).
+motor(hyundai_ioniq_hybrid, i4,        139, hibrido).
+motor(jeep_wrangler_rubicon, v6,      285, gasolina).
+motor(volvo_v60_d4,         i4,        190, diesel).
 
 % 4. mecanica(ID, Transmision, Traccion).
 mecanica(honda_civic,         automatica, delantera).
@@ -89,7 +130,18 @@ mecanica(ford_bronco,         automatica, '4x4').
 mecanica(hyundai_tucson,      automatica, delantera).
 mecanica(bmw_m3,              manual,     trasera).
 mecanica(chevrolet_silverado, automatica, '4x4').
+mecanica(subaru_forester_hy, automatica,    awd).
+mecanica(bmw_i8,              automatica, awd).
 
+mecanica(nissan_leaf,         automatica, delantera).
+mecanica(toyota_rav4_hybrid,  automatica, awd).
+mecanica(chevrolet_camaro_ss, manual, trasera).
+mecanica(peugeot_308_hdi,     manual, delantera).
+mecanica(mitsubishi_l200,     manual, awd).
+mecanica(alfa_romeo_giulia_qv, automatica, trasera).
+mecanica(hyundai_ioniq_hybrid, manual, delantera).
+mecanica(jeep_wrangler_rubicon, automatica, awd).
+mecanica(volvo_v60_d4,        automatica, delantera).
 
 % ==========================================
 % REGLAS DE INFERENCIA (Conocimiento Deducido)
@@ -308,7 +360,8 @@ buscar_vehiculos(Filtros, Lista) :-
         Lista
     ).
 
-cumple_filtros(_, []).
+cumple_filtros(ID, []) :-
+    auto(ID, _, _, _, _).
 
 cumple_filtros(ID, [Filtro|Resto]) :-
     cumple_filtro(ID, Filtro),
@@ -338,3 +391,6 @@ cumple_filtro(ID, potencia_minima(PotenciaMinima)) :-
 
 cumple_filtro(ID, combustible(Combustible)) :-
     motor(ID, _, _, Combustible).
+% Predicado para ejecutar busquedas desde Python
+buscar_desde_api(Filtros, Lista) :-
+    buscar_vehiculos(Filtros, Lista).
