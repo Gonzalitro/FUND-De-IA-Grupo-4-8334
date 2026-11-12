@@ -1,0 +1,452 @@
+
+:root {
+
+    /* =========================
+       FONDOS
+    ========================= */
+
+    --color-fondo: #071426;
+    --color-fondo-secundario: #0D1F36;
+    --color-contenedor: #102945;
+    --color-contenedor-hover: #153653;
+
+
+    /* =========================
+       AZULES
+    ========================= */
+
+    --color-azul-principal: #1677FF;
+    --color-azul-neon: #00B7FF;
+    --color-azul-brillante: #38D6FF;
+    --color-azul-oscuro: #123A63;
+
+
+    /* =========================
+       VERDES
+    ========================= */
+
+    --color-verde-principal: #00C987;
+    --color-verde-hover: #00A873;
+    --color-verde-neon: #00F5A0;
+
+
+    /* =========================
+       ROJOS
+    ========================= */
+
+    --color-rojo-principal: #F04452;
+    --color-rojo-hover: #D92F42;
+    --color-rojo-neon: #FF5263;
+
+
+    /* =========================
+       TEXTOS
+    ========================= */
+
+    --color-texto-principal: #F1F6FC;
+    --color-texto-secundario: #A8BBD0;
+    --color-texto-muted: #71869E;
+
+
+    /* =========================
+       BORDES Y SOMBRAS
+    ========================= */
+
+    --color-borde: #17619B;
+    --color-borde-neon: #00B7FF;
+
+    --sombra-neon-azul:
+        0 0 8px rgba(0, 183, 255, 0.25),
+        0 0 20px rgba(0, 183, 255, 0.10);
+
+    --sombra-neon-verde:
+        0 0 12px rgba(0, 245, 160, 0.20);
+
+    --sombra-neon-roja:
+        0 0 12px rgba(255, 82, 99, 0.20);
+
+
+    /* =========================
+       OTROS
+    ========================= */
+
+    --radio-borde: 12px;
+    --transicion: 0.25s ease;
+}
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: var(--color-fondo);
+    color: var(--color-texto-principal);
+}
+
+
+/* =========================
+   CONTENEDOR PRINCIPAL
+========================= */
+
+.pagina-principal {
+    min-height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 30px;
+}
+
+.contenedor-chatbots {
+    width: 100%;
+    max-width: 850px;
+
+    padding: 50px 35px;
+
+    background-color: var(--color-contenedor);
+
+    border: 1px solid var(--color-borde-neon);
+    border-radius: var(--radio-borde);
+
+    box-shadow: var(--sombra-neon-azul);
+}
+
+
+/* =========================
+   ENCABEZADO
+========================= */
+
+.encabezado {
+    text-align: center;
+    margin-bottom: 45px;
+}
+
+.titulo-principal {
+    font-size: 2.8rem;
+    font-weight: 700;
+
+    margin-bottom: 20px;
+
+    color: var(--color-texto-principal);
+}
+
+.descripcion {
+    font-size: 1.1rem;
+    line-height: 1.6;
+
+    color: var(--color-texto-secundario);
+}
+
+
+/* =========================
+   OPCIONES DE CHATBOT
+========================= */
+
+.opciones-chatbots {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    flex-wrap: wrap;
+}
+
+
+/* =========================
+   BOTONES GENERALES
+========================= */
+
+.boton-chatbot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+
+    min-width: 230px;
+    padding: 18px 25px;
+
+    border: 1px solid transparent;
+    border-radius: var(--radio-borde);
+
+    font-size: 1.1rem;
+    font-weight: 600;
+
+    color: var(--color-texto-principal);
+
+    cursor: pointer;
+
+    transition: var(--transicion);
+}
+
+.boton-chatbot i {
+    font-size: 1.4rem;
+}
+
+
+/* =========================
+   BOTÓN PROLOG
+========================= */
+
+.boton-prolog {
+    background-color: var(--color-verde-principal);
+    color: var(--color-fondo);
+}
+
+.boton-prolog:hover {
+    background-color: var(--color-verde-hover);
+
+    box-shadow: var(--sombra-neon-verde);
+
+    transform: translateY(-3px);
+}
+
+
+/* =========================
+   BOTÓN LLM
+========================= */
+
+.boton-llm {
+    background-color: var(--color-azul-principal);
+    color: white;
+}
+
+.boton-llm:hover {
+    background-color: var(--color-azul-neon);
+
+    box-shadow: var(--sombra-neon-azul);
+
+    transform: translateY(-3px);
+}
+
+
+
+
+/* =========================
+   RESPONSIVIDAD
+========================= */
+
+@media (max-width: 576px) {
+
+    .contenedor-chatbots {
+        padding: 35px 20px;
+    }
+
+    .titulo-principal {
+        font-size: 2rem;
+    }
+
+    .opciones-chatbots {
+        flex-direction: column;
+    }
+
+    .boton-chatbot {
+        width: 100%;
+    }
+
+}
+
+/* =========================
+   FORMULARIO PROLOG
+========================= */
+
+.formulario-prolog {
+    margin-top: 35px;
+    padding: 30px;
+
+    background-color: var(--color-fondo-secundario);
+
+    border: 1px solid var(--color-borde-neon);
+    border-radius: var(--radio-borde);
+
+    box-shadow: var(--sombra-neon-azul);
+}
+
+.formulario-encabezado {
+    margin-bottom: 30px;
+}
+
+.formulario-encabezado h2 {
+    color: var(--color-texto-principal);
+    margin-bottom: 10px;
+}
+
+.formulario-encabezado p {
+    color: var(--color-texto-secundario);
+}
+
+
+/* Distribución de campos */
+
+.campos-filtros {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 22px;
+}
+
+.campo-filtro {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.campo-filtro label {
+    color: var(--color-texto-principal);
+    font-weight: 600;
+}
+
+
+/* Inputs y selects */
+
+.campo-filtro input,
+.campo-filtro select {
+    width: 100%;
+    padding: 12px;
+
+    background-color: var(--color-contenedor);
+
+    border: 1px solid var(--color-borde);
+    border-radius: 8px;
+
+    color: var(--color-texto-principal);
+
+    outline: none;
+    transition: var(--transicion);
+}
+
+.campo-filtro input:focus,
+.campo-filtro select:focus {
+    border-color: var(--color-azul-neon);
+    box-shadow: var(--sombra-neon-azul);
+}
+
+.campo-filtro input::placeholder {
+    color: var(--color-texto-muted);
+}
+
+.campo-filtro select option {
+    background-color: var(--color-contenedor);
+    color: var(--color-texto-principal);
+}
+
+
+/* Botones */
+
+.acciones-formulario {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+
+    margin-top: 30px;
+}
+
+.boton-limpiar,
+.boton-buscar {
+    padding: 12px 20px;
+
+    border: none;
+    border-radius: 8px;
+
+    font-weight: 600;
+    cursor: pointer;
+
+    transition: var(--transicion);
+}
+
+.boton-limpiar {
+    background-color: var(--color-rojo-principal);
+    color: white;
+}
+
+.boton-limpiar:hover {
+    background-color: var(--color-rojo-hover);
+}
+
+.boton-buscar {
+    background-color: var(--color-verde-principal);
+    color: var(--color-fondo);
+}
+
+.boton-buscar:hover {
+    background-color: var(--color-verde-hover);
+    box-shadow: var(--sombra-neon-verde);
+}
+
+
+/* Responsividad */
+
+@media (max-width: 576px) {
+
+    .campos-filtros {
+        grid-template-columns: 1fr;
+    }
+
+    .acciones-formulario {
+        flex-direction: column;
+    }
+
+    .boton-limpiar,
+    .boton-buscar {
+        width: 100%;
+    }
+
+}
+
+.resultados-prolog {
+    margin-top: 25px;
+}
+
+.encabezado-resultados {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.encabezado-resultados h3 {
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+.encabezado-resultados span {
+    color: var(--texto-secundario);
+    font-size: 0.85rem;
+}
+
+.lista-resultados {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+}
+
+.item-resultado {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    border: 1px solid var(--borde-neon);
+    border-radius: 8px;
+    background: var(--fondo-secundario);
+}
+
+.item-resultado i {
+    color: var(--azul-neon);
+    font-size: 1.2rem;
+}
+
+.mensaje-resultados,
+.mensaje-error {
+    padding: 15px;
+    border-radius: 8px;
+    background: var(--fondo-secundario);
+    text-align: center;
+}
+
+.mensaje-error {
+    border: 1px solid var(--rojo);
+}
