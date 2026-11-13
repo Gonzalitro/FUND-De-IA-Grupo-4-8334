@@ -342,5 +342,59 @@ async function buscarVehiculosProlog() {
         `;
 
     }
+    const btnLlm = document.getElementById("btn-llm");
 
+btnLlm.addEventListener("click", () => {
+    const contenedor = document.getElementById("contenedor-formulario");
+
+    contenedor.innerHTML = `
+        <section class="formulario-prolog">
+            <div class="formulario-encabezado">
+                <h2>Consultar con Asistente LLM</h2>
+                <p>Haz tu pregunta en lenguaje natural sobre nuestro catálogo de vehículos.</p>
+            </div>
+
+            <form id="form-chat-llm" style="display: flex; gap: 15px; margin-top: 20px;">
+                <input type="text" id="input-pregunta" placeholder="Ej: ¿Qué autos familiares automáticos tienes?" required
+                    style="flex: 1; padding: 12px; border-radius: 8px; border: 1px solid var(--color-borde); background: var(--color-contenedor); color: white;">
+                <button type="submit" class="boton-buscar">Preguntar</button>
+            </form>
+
+            <div id="resultados-llm" class="resultados-prolog" style="margin-top: 20px;"></div>
+        </section>
+    `;
+
+    document.getElementById("form-chat-llm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const pregunta = document.getElementById("input-pregunta").value;
+        const resultados = document.getElementById("resultados-llm");
+
+        resultados.innerHTML = "<p>Pensando...</p>";
+
+        try {
+            const res = await fetch("http://127.0.0.1:8001/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ pregunta: pregunta })
+            });
+
+            if (!res.ok) throw new Error("Error en la conexión con el LLM");
+
+            const datos = await res.json();
+
+            resultados.innerHTML = `
+                <div class="mensaje-resultados" style="text-align: left; padding: 15px; line-height: 1.5;">
+                    <p>${datos.respuesta}</p>
+                </div>
+            `;
+        } catch (error) {
+            resultados.innerHTML = `
+                <div class="mensaje-error">
+                    <p>No fue posible obtener la respuesta.</p>
+                    <small>${error.message}</small>
+                </div>
+            `;
+        }
+    });
+});
 }
