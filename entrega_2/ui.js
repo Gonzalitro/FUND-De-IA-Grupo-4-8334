@@ -1,4 +1,4 @@
-
+//variable que contiene los datos que se pueden enviar en la consulta
 const OPCIONES_PROLOG = {
 
     marcas: [
@@ -64,7 +64,7 @@ const OPCIONES_PROLOG = {
     combustibles: [
         { valor: "gasolina", texto: "Gasolina" },
         { valor: "diesel", texto: "Diésel" },
-        { valor: "electrico", texto: "Eléctrico" },
+        { valor: "electricidad", texto: "Eléctrico" },
         { valor: "hibrido", texto: "Híbrido" }
     ]
 
@@ -110,9 +110,7 @@ function crearSelect(id, nombre, opciones) {
     return html;
 }
 
-
-
-
+//funcion que muestra el formulario
 function mostrarFormularioProlog() {
 
     const contenedor = document.getElementById("contenedor-formulario");
@@ -220,7 +218,7 @@ function mostrarFormularioProlog() {
 
 }
 
-
+//funcion que obtiene las respuestas al formulario
 function obtenerFiltrosProlog() {
 
     const formulario = document.getElementById("form-filtros-prolog");
@@ -248,11 +246,25 @@ btnProlog.addEventListener("click", () => {
 
 });
 
+
+function escaparHTML(valor) {
+    const elemento = document.createElement("span");
+    elemento.textContent = String(valor ?? "");
+    return elemento.innerHTML;
+}
+
+function capitalizar(valor) {
+    return String(valor ?? "")
+        .replaceAll("_", " ")
+        .replace(/\b\w/g, letra => letra.toUpperCase());
+}
+
+//funcion que muestra las tarjetas de resultado
 function mostrarResultadosProlog(resultados) {
 
     const contenedor = document.getElementById("resultados-prolog");
 
-    if (resultados.length === 0) {
+    if (!resultados || resultados.length === 0) {
 
         contenedor.innerHTML = `
             <div class="mensaje-resultados">
@@ -265,35 +277,93 @@ function mostrarResultadosProlog(resultados) {
 
     let html = `
         <div class="encabezado-resultados">
-            <h3>Vehículos encontrados</h3>
+            <h3>Estos son los vehículos que encontre:</h3>
             <span>${resultados.length} resultados</span>
         </div>
 
-        <ul class="lista-resultados">
+        <div class="lista-resultados">
     `;
 
-    resultados.forEach(id => {
+    resultados.forEach(vehiculo => {
 
-        const nombre = id
-            .replaceAll("_", " ")
-            .replace(/\b\w/g, letra => letra.toUpperCase());
+        const nombre = capitalizar(
+            `${vehiculo.marca} ${vehiculo.modelo}`
+        );
 
         html += `
-            <li class="item-resultado">
-                <i class="bi bi-car-front-fill"></i>
-                <span>${nombre}</span>
-            </li>
+            <article class="tarjeta-vehiculo">
+
+                <div class="tarjeta-vehiculo-encabezado">
+
+                    <div>
+                        <h4>${escaparHTML(nombre)}</h4>
+                        <span class="vehiculo-anio">
+                            ${escaparHTML(vehiculo.anio)}
+                        </span>
+                    </div>
+
+                    <i class="bi bi-car-front-fill"></i>
+
+                </div>
+
+                <div class="vehiculo-detalles">
+
+                    <div class="detalle-vehiculo">
+                        <i class="bi bi-car-front"></i>
+                        <span>
+                            ${escaparHTML(capitalizar(vehiculo.carroceria))}
+                        </span>
+                    </div>
+
+                    <div class="detalle-vehiculo">
+                        <i class="bi bi-gear"></i>
+                        <span>
+                            ${escaparHTML(capitalizar(vehiculo.motor))}
+                            · ${escaparHTML(vehiculo.potencia)} HP
+                        </span>
+                    </div>
+
+                    <div class="detalle-vehiculo">
+                        <i class="bi bi-fuel-pump"></i>
+                        <span>
+                            ${escaparHTML(capitalizar(vehiculo.combustible))}
+                        </span>
+                    </div>
+
+                    <div class="detalle-vehiculo">
+                        <i class="bi bi-speedometer2"></i>
+                        <span>
+                            ${escaparHTML(capitalizar(vehiculo.transmision))}
+                        </span>
+                    </div>
+
+                    <div class="detalle-vehiculo">
+                        <i class="bi bi-arrow-left-right"></i>
+                        <span>
+                            Tracción ${escaparHTML(capitalizar(vehiculo.traccion))}
+                        </span>
+                    </div>
+
+                </div>
+
+                <div class="vehiculo-capacidad">
+                    <span>${escaparHTML(vehiculo.asientos)} asientos</span>
+                    <span>${escaparHTML(vehiculo.puertas)} puertas</span>
+                </div>
+
+            </article>
         `;
 
     });
 
     html += `
-        </ul>
+        </div>
     `;
 
     contenedor.innerHTML = html;
 }
 
+// funcion que manda la consulta al backend
 async function buscarVehiculosProlog() {
 
     const filtros = obtenerFiltrosProlog();
@@ -301,7 +371,9 @@ async function buscarVehiculosProlog() {
     const contenedor = document.getElementById("resultados-prolog");
 
     contenedor.innerHTML = `
-        <p>Buscando vehículos...</p>
+        <div class="mensaje-resultados">
+            <p>Buscando vehículos...</p>
+        </div>
     `;
 
     try {
@@ -337,7 +409,7 @@ async function buscarVehiculosProlog() {
         contenedor.innerHTML = `
             <div class="mensaje-error">
                 <p>No fue posible realizar la búsqueda.</p>
-                <small>${error.message}</small>
+                <small>${escaparHTML(error.message)}</small>
             </div>
         `;
 
