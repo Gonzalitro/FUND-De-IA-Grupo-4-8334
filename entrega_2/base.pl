@@ -200,158 +200,10 @@ auto_entusiasta(ID) :-
     Carroceria \== suv,
     Carroceria \== pickup.
 
+
 % ==========================================
-% INTERFAZ DE USUARIO (CHATBOT EN CONSOLA)
+% BUSQUEDA POR CARACTERISTICAS
 % ==========================================
-
-iniciar :-
-    nl,
-    write('=========================================='), nl,
-    write('   EXPERTO EN AUTOMOVILES - CHATBOT       '), nl,
-    write('=========================================='), nl,
-    write('Selecciona una de las siguientes opciones:'), nl,
-    menu.
-
-menu :-
-    nl,
-% consultas de inferencia
-    write('1. Buscar Vehiculo por caracteristicas'), nl,
-    write('2. Vehiculos de ciudad recomendados'), nl,
-    write('3. Vehiculos familiares recomendados'), nl,
-    write('4. vehiculos deportivos '), nl,
-    write('5. vehiculos recomendados para offroad'), nl,
-    write('6. Vehiculos premium aptos para nieve'), nl,
-    write('7. vehiculos de entusiasta'), nl,
-    write('0. Salir.'), nl,
-    write('------------------------------------------'), nl,
-    write('Opcion (recuerda escribir el punto final, ej: 15.): '),
-    read(Opcion),
-    procesar_opcion(Opcion).
-
-% --- Respuestas del Chatbot ---
-
-procesar_opcion(0) :- 
-    write('Sesion finalizada.'), nl.
-
-% =========================================================
-% OPCION 1 - BUSQUEDA POR CARACTERISTICAS
-% =========================================================
-
-procesar_opcion(1) :-
-    nl,
-    write('========== BUSQUEDA POR CARACTERISTICAS =========='), nl,
-    write('1. Buscar auto por marca'), nl,
-    write('2. Buscar auto por carroceria/tipo'), nl,
-    write('3. Buscar auto por ano'), nl,
-    write('4. Buscar auto por motor'), nl,
-    write('5. Buscar auto por traccion'), nl,
-    write('6. Buscar auto por transmision'), nl,
-    write('7. Buscar auto por potencia minima'), nl,
-    write('8. Buscar auto por tipo de combustible'), nl,
-    nl,
-    write('Ingrese la CANTIDAD de caracteristicas que desea incluir: '),
-    read(Cantidad),
-    seleccionar_filtros(Cantidad, Filtros),
-    buscar_vehiculos(Filtros, Lista),
-    nl,
-    write('========== RESULTADOS =========='), nl,
-    mostrar_lista(Lista).
-
-
-procesar_opcion(2) :-
-    findall(ID,auto_ciudad(ID),Lista),
-    write('autos de ciudad:'), nl, mostrar_lista(Lista).
-    
-procesar_opcion(3) :-
-    findall(ID,auto_familiar(ID),Lista),
-    write('autos familiares:'), nl, mostrar_lista(Lista).
-
-procesar_opcion(4) :-
-    findall(ID,auto_deportivo(ID),Lista),
-    write('autos deportivos:'), nl, mostrar_lista(Lista).
-
-procesar_opcion(5) :-
-    findall(ID,auto_offroad(ID),Lista),
-    write('autos de offroad:'), nl, mostrar_lista(Lista).
-    
-procesar_opcion(6) :-
-    findall(ID,auto_nieve(ID),Lista),
-    write('autos de nieve:'), nl, mostrar_lista(Lista).
-
-procesar_opcion(7) :-
-    findall(ID,auto_entusiasta(ID),Lista),
-    write('autos de entusiasta:'), nl, mostrar_lista(Lista).
-
-procesar_opcion(_) :-
-    write('Opcion invalida. Ingrese el numero seguido de un punto.'), nl, menu.
-
-mostrar_lista([]) :-
-    write('  - (Sin coincidencias)'), nl.
-mostrar_lista([Cabeza|Cola]) :-
-    write('  -> '), write(Cabeza), nl,
-    mostrar_lista(Cola).
-
-
-
-seleccionar_filtros(0, []).
-seleccionar_filtros(Cantidad, [Filtro|Resto]) :-
-    Cantidad > 0,
-    nl,
-    write('Seleccione una caracteristica: '), nl,
-    write('1. Marca'), nl,
-    write('2. Carroceria/tipo'), nl,
-    write('3. Ano'), nl,
-    write('4. Motor'), nl,
-    write('5. Traccion'), nl,
-    write('6. Transmision'), nl,
-    write('7. Potencia minima'), nl,
-    write('8. Combustible'), nl,
-    write('Opcion: '),
-    read(Opcion),
-
-    ingresar_filtro(Opcion, Filtro),
-
-    NuevaCantidad is Cantidad - 1,
-    seleccionar_filtros(NuevaCantidad, Resto).
-
-
-% =========================================================
-% INGRESAR CADA FILTRO
-% =========================================================
-
-ingresar_filtro(1, marca(Marca)) :-
-    write('Ingrese la marca: '),
-    read(Marca).
-
-
-ingresar_filtro(2, carroceria(Carroceria)) :-
-    write('Ingrese el tipo/carroceria: '),
-    read(Carroceria).
-
-ingresar_filtro(3, anio(Ano)) :-
-    write('Ingrese el ano: '),
-    read(Ano).
-
-
-ingresar_filtro(4, motor(TipoMotor)) :-
-    write('Ingrese el tipo de motor: '),
-    read(TipoMotor).
-
-ingresar_filtro(5, traccion(Traccion)) :-
-    write('Ingrese la traccion: '),
-    read(Traccion).
-
-ingresar_filtro(6, transmision(Transmision)) :-
-    write('Ingrese la transmision: '),
-    read(Transmision).
-
-ingresar_filtro(7, potencia_minima(Potencia)) :-
-    write('Ingrese la potencia minima en HP: '),
-    read(Potencia).
-
-ingresar_filtro(8, combustible(Combustible)) :-
-    write('Ingrese el combustible: '),
-    read(Combustible).
 
 buscar_vehiculos(Filtros, Lista) :-
     findall(
@@ -366,6 +218,11 @@ cumple_filtros(ID, []) :-
 cumple_filtros(ID, [Filtro|Resto]) :-
     cumple_filtro(ID, Filtro),
     cumple_filtros(ID, Resto).
+
+
+% ==========================================
+% EVALUACION DE CADA FILTRO
+% ==========================================
 
 cumple_filtro(ID, marca(Marca)) :-
     auto(ID, Marca, _, _, _).
@@ -391,6 +248,144 @@ cumple_filtro(ID, potencia_minima(PotenciaMinima)) :-
 
 cumple_filtro(ID, combustible(Combustible)) :-
     motor(ID, _, _, Combustible).
-% Predicado para ejecutar busquedas desde Python
-buscar_desde_api(Filtros, Lista) :-
-    buscar_vehiculos(Filtros, Lista).
+
+
+% ==========================================
+% OBTENER TODOS LOS DATOS DE UN VEHICULO
+% ==========================================
+
+obtener_datos_vehiculo(
+    ID,
+    Marca,
+    Modelo,
+    Carroceria,
+    Anio,
+    Asientos,
+    Puertas,
+    TipoMotor,
+    Potencia,
+    Combustible,
+    Transmision,
+    Traccion
+) :-
+    auto(ID, Marca, Modelo, Carroceria, Anio),
+    dimensiones(ID, Asientos, Puertas),
+    motor(ID, TipoMotor, Potencia, Combustible),
+    mecanica(ID, Transmision, Traccion).
+
+
+% ==========================================
+% BUSQUEDA COMPLETA PARA PYTHON
+% ==========================================
+
+buscar_desde_api(Filtros, Vehiculos) :-
+
+    % Primero obtiene los ID que cumplen los filtros
+    buscar_vehiculos(Filtros, ListaIDs),
+
+    % Después recupera todos los datos de cada vehículo
+    findall(
+        vehiculo(
+            ID,
+            Marca,
+            Modelo,
+            Carroceria,
+            Anio,
+            Asientos,
+            Puertas,
+            TipoMotor,
+            Potencia,
+            Combustible,
+            Transmision,
+            Traccion
+        ),
+
+        (
+            member(ID, ListaIDs),
+
+            obtener_datos_vehiculo(
+                ID,
+                Marca,
+                Modelo,
+                Carroceria,
+                Anio,
+                Asientos,
+                Puertas,
+                TipoMotor,
+                Potencia,
+                Combustible,
+                Transmision,
+                Traccion
+            )
+        ),
+
+        Vehiculos
+    ).
+
+
+% ==========================================
+% CONSULTAS DE RECOMENDACION PARA PYTHON
+% ==========================================
+
+% Relaciona cada categoria con su regla de inferencia.
+
+vehiculo_recomendado(ciudad, ID) :-
+    auto_ciudad(ID).
+
+vehiculo_recomendado(familiar, ID) :-
+    auto_familiar(ID).
+
+vehiculo_recomendado(deportivo, ID) :-
+    auto_deportivo(ID).
+
+vehiculo_recomendado(offroad, ID) :-
+    auto_offroad(ID).
+
+vehiculo_recomendado(nieve, ID) :-
+    auto_nieve(ID).
+
+vehiculo_recomendado(entusiasta, ID) :-
+    auto_entusiasta(ID).
+
+
+% Devuelve todos los datos de los vehículos recomendados.
+
+recomendaciones_desde_api(Tipo, Vehiculos) :-
+
+    findall(
+        vehiculo(
+            ID,
+            Marca,
+            Modelo,
+            Carroceria,
+            Anio,
+            Asientos,
+            Puertas,
+            TipoMotor,
+            Potencia,
+            Combustible,
+            Transmision,
+            Traccion
+        ),
+
+        (
+            vehiculo_recomendado(Tipo, ID),
+
+            obtener_datos_vehiculo(
+                ID,
+                Marca,
+                Modelo,
+                Carroceria,
+                Anio,
+                Asientos,
+                Puertas,
+                TipoMotor,
+                Potencia,
+                Combustible,
+                Transmision,
+                Traccion
+            )
+        ),
+
+        Vehiculos
+    ).

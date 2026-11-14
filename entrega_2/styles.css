@@ -450,3 +450,66 @@ body {
 .mensaje-error {
     border: 1px solid var(--rojo);
 }
+
+
+.lista-resultados {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.tarjeta-vehiculo {
+    padding: 18px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    background: var(--color-contenedor);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.tarjeta-vehiculo:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+    background: var(--color-contenedor-hover);
+}
+
+.tarjeta-vehiculo-encabezado {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.tarjeta-vehiculo-encabezado h4 {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.tarjeta-vehiculo-encabezado > i {
+    font-size: 27px;
+    color: var(--color-azul-neon);
+}
+
+.detalle-vehiculo {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 13px;
+    color: var(--color-texto-principal);
+}
+
+.detalle-vehiculo i {
+    color: var(--color-azul-neon);
+    font-size: 15px;
+}
+.vehiculo-anio,
+.vehiculo-capacidad {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+    padding-top: 12px;
+    border-top: 1px solid ;
+    color: var(--color-texto-secundario);
+    font-size: 12px;
+}

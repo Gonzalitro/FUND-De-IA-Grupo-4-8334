@@ -74,15 +74,22 @@ def buscar(filtros: Filtros):
             terminos.append(f"{campo}({valor})")
 
         elif campo == "anio":
+
             if not 1990 <= valor <= 2030:
-                raise HTTPException(status_code=400, detail="Ano no valido")
+                raise HTTPException(
+                    status_code=400,
+                    detail="Ano no valido"
+                )
 
             terminos.append(f"anio({valor})")
 
         elif campo == "potencia":
+
             if valor < 0:
                 raise HTTPException(
-                    status_code=400, detail="Potencia no valida")
+                    status_code=400,
+                    detail="Potencia no valida"
+                )
 
             terminos.append(f"potencia_minima({valor})")
 
@@ -92,15 +99,45 @@ def buscar(filtros: Filtros):
     )
 
     try:
+
         resultado = list(prolog.query(consulta))
-        lista = resultado[0]["Lista"]
+
+        lista = resultado[0]["Lista"] if resultado else []
+        print("RESULTADO PROLOG:", lista)
+        print("TIPO DEL PRIMER ELEMENTO:", type(
+            lista[0]) if lista else "Lista vacía")
+
+        vehiculos = []
+
+        for vehiculo in lista:
+
+            # Quitar el nombre del predicado y los paréntesis
+            contenido = vehiculo[len("vehiculo("):-1]
+
+            # Separar los 12 argumentos
+            datos = [campo.strip() for campo in contenido.split(",")]
+
+            vehiculos.append({
+                "id": datos[0],
+                "marca": datos[1],
+                "modelo": datos[2],
+                "carroceria": datos[3],
+                "anio": int(datos[4]),
+                "asientos": int(datos[5]),
+                "puertas": int(datos[6]),
+                "motor": datos[7],
+                "potencia": int(datos[8]),
+                "combustible": datos[9],
+                "transmision": datos[10],
+                "traccion": datos[11]
+            })
 
         return {
-            "cantidad": len(lista),
-            "resultados": [str(id) for id in lista]
+            "cantidad": len(vehiculos),
+            "resultados": vehiculos
         }
-
     except Exception as error:
+
         raise HTTPException(
             status_code=500,
             detail=f"Error al consultar Prolog: {str(error)}"
