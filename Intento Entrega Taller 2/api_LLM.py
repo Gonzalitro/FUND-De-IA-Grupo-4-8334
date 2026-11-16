@@ -35,17 +35,24 @@ def cargar_conocimiento_prolog(ruta="base.pl") -> str:
 BASE_CONOCIMIENTO = cargar_conocimiento_prolog("base.pl")
 
 SYSTEM_PROMPT = f"""
-Eres un asistente experto en vehículos diseñado para responder preguntas utilizando ÚNICAMENTE
-la base de conocimiento proporcionada a continuación (escrita en hechos y reglas de Prolog).
+Eres un asistente experto en vehículos diseñado para responder preguntas y hacer recomendaciones
+utilizando ÚNICAMENTE el catálogo de vehículos proporcionado a continuación (expresado como hechos de Prolog).
 
 REGLAS ESTRICTAS DE COMPORTAMIENTO:
-1. Basa todas tus respuestas EXCLUSIVAMENTE en los hechos (auto, dimensiones, motor, mecanica) y reglas de inferencia (auto_ciudad, auto_familiar, auto_deportivo, auto_offroad, auto_nieve, auto_entusiasta) definidas en el código.
-2. No inventes vehículos, precios, años ni especificaciones que no aparezcan explícitamente en la base.
-3. Si el usuario pregunta por un vehículo o característica que no existe en la base, indica claramente que no se encuentra en el catálogo registrado.
-4. Cuando te pidan recomendaciones (ej. auto deportivo, familiar, off-road, para nieve, ciudad o entusiasta), aplica estrictamente las condiciones lógicas de las reglas definidas en la base de conocimiento y menciona qué vehículos cumplen.
-5. Responde en español, de forma clara, amable y estructurada.
+1. Tu universo de vehículos se limita EXCLUSIVAMENTE a los registros entregados en el catálogo
+    (auto, dimensiones, motor, mecanica).No inventes modelos, años ni especificaciones que no aparezcan en los hechos.
 
-BASE DE CONOCIMIENTO (base.pl):
+2. Si el usuario pregunta por un vehículo o característica que no existe en el catálogo, indica claramente que no se
+   encuentra registrado.
+
+3. Cuando te pidan recomendaciones o categorías (por ejemplo: auto familiar, deportivo, off-road, para nieve, ciudad
+    o entusiasta),utiliza tu propio criterio experto e inferencia semántica para evaluar las especificaciones 
+    técnicas de los autos del catálogo(potencia, tracción, transmisión, carrocería, asientos, puertas) y justifica
+    por qué los vehículos que eliges cumplen con lo que busca el usuario. debes ignorar las reglas de inferencia de prolog.
+
+4. Responde en español, de forma clara, amable y estructurada.
+
+CATÁLOGO DE VEHÍCULOS DISPONIBLES:
 {BASE_CONOCIMIENTO}
 """
 
@@ -53,9 +60,11 @@ BASE DE CONOCIMIENTO (base.pl):
 class ConsultaLLM(BaseModel):
     pregunta: str
 
+
 def obtener_modelos_flash():
     """Obtiene dinámicamente los modelos Gemini disponibles en la cuenta."""
-    candidatos = ["gemini-3.8-flash", "gemini-3.8-flash-lite", "gemini-3.8-pro"]
+    candidatos = ["gemini-3.8-flash",
+                  "gemini-3.8-flash-lite", "gemini-3.8-pro"]
     try:
         for m in client.models.list():
             nombre = m.name.replace("models/", "")
@@ -70,7 +79,8 @@ def obtener_modelos_flash():
 @app.post("/chat")
 def responder_chat(consulta: ConsultaLLM):
     if not consulta.pregunta.strip():
-        raise HTTPException(status_code=400, detail="La pregunta no puede estar vacía.")
+        raise HTTPException(
+            status_code=400, detail="La pregunta no puede estar vacía.")
 
     if API_KEY == "PEGA_TU_API_KEY_AQUI":
         raise HTTPException(
